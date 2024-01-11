@@ -1,28 +1,14 @@
-// pages/dashboard/page.tsx
-"use client";
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import type { Database } from '@/types/database.types';
+import DashboardPage from './dashboardPage'
 
-import React from 'react';
-import SideNavbar from './components/sideNavbar';
-import ProjectSection from './components/projectSection';
-import CompanyOverviewSection from './components/overviewSection';
+export default async function Account() {
+  const supabase = createServerComponentClient<Database>({ cookies })
 
-const DashboardPage = () => {
-  return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar*/
-      <SideNavbar /> }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-      {/* Main content area */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="m-8">
-          {/* Sections for different parts of the dashboard */}
-          <CompanyOverviewSection />
-          <ProjectSection />
-          {/* More sections can be added as needed */}
-        </div>
-      </main>
-    </div>
-  );
-};
-
-export default DashboardPage;
+  return <DashboardPage user={user} />
+}
